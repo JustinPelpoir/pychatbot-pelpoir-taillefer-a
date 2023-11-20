@@ -7,6 +7,4 @@ conversion_minuscule(fichiers)
 retrait_ponctuation(fichiers)
 
 
-# print(Inverse_Document_Frequency("cleaned/", fichiers))
-
-# print(term_frequency()
+print(score_tf_idf("cleaned/"))
