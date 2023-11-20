@@ -1,6 +1,7 @@
 import os
 import math
 
+
 # Extraire les noms des fichiers texte
 def liste_fichiers(repertoire, extension):
 
@@ -123,14 +124,15 @@ def term_frequency(chaine):
     return dico_TF
 
 
-def Inverse_Document_Frequency(repertoire, liste_noms_fichier):
+def Inverse_Document_Frequency(repertoire):
     dico_IDF = {}
+    fichiers = liste_fichiers(repertoire, ".txt")
 
     # Pour chaque fichier texte, vérification de la présence des mots
-    for i in range(0, len(liste_noms_fichier)):
+    for i in range(0, len(fichiers)):
 
         # Lecture du fichier texte
-        with open(repertoire+liste_noms_fichier[i], "r") as fichier:
+        with open(repertoire+fichiers[i], "r") as fichier:
             texte = fichier.read()
 
         mots = texte.split()
@@ -150,6 +152,35 @@ def Inverse_Document_Frequency(repertoire, liste_noms_fichier):
 
     # Pour chaque mot dans les textes, calcul du poids du mot
     for cle in dico_IDF.keys():
-        dico_IDF[cle] = math.log(1 / (dico_IDF[cle]/len(liste_noms_fichier)))
+        dico_IDF[cle] = math.log10(len(fichiers) / (dico_IDF[cle]))
 
     return dico_IDF
+
+
+def score_tf_idf(repertoire):
+    dico_tf_idf = {}
+    fichiers = liste_fichiers(repertoire, ".txt")
+
+    # Appeler la valeur IDF de chacun des mots dans les textes du répertoire
+    idf = Inverse_Document_Frequency(repertoire)
+
+    # Création d'une liste pour chaque mot stockant le score TF-IDF pour chaque document
+    for cle in idf.keys():
+        dico_tf_idf[cle] = []
+
+    for i in range(0, len(fichiers)):
+
+        # Ouverture de chaque texte un par un
+        with open(repertoire+fichiers[i], "r") as fichier:
+            texte = fichier.read()
+            tf = term_frequency(texte)      # Appel de la valeur TF des mots du texte analysé
+
+            # Ajout du score TF-IDF de chaque mot
+            for cle_idf in idf.keys():
+                if cle_idf not in tf.keys():
+                    dico_tf_idf[cle_idf].append(0)
+
+                elif cle_idf in tf.keys():
+                    dico_tf_idf[cle_idf].append(idf[cle_idf] * tf[cle_idf])
+
+    return dico_tf_idf
