@@ -7,4 +7,4 @@ conversion_minuscule(fichiers)
 retrait_ponctuation(fichiers)
 
 
-print(score_tf_idf("cleaned/"))
+print(mots_importants("cleaned/"))

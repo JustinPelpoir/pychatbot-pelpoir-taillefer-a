@@ -138,17 +138,17 @@ def Inverse_Document_Frequency(repertoire):
         mots = texte.split()
         mots_check = []
 
-        for i in range(0, len(mots)):
+        for k in range(0, len(mots)):
             # Vérifier si un mot n'a pas déjà été analysé dans le même fichier texte
-            if mots[i] not in mots_check:
+            if mots[k] not in mots_check:
                 # Vérifier si le mot est déjà dans un autre fichier
-                if mots[i] in dico_IDF.keys():
-                    dico_IDF[mots[i]] += 1
+                if mots[k] in dico_IDF.keys():
+                    dico_IDF[mots[k]] += 1
                 else:
-                    dico_IDF[mots[i]] = 1
+                    dico_IDF[mots[k]] = 1
 
                 # Ajout du mot dans la liste des mots analysés
-                mots_check.append(mots[i])
+                mots_check.append(mots[k])
 
     # Pour chaque mot dans les textes, calcul du poids du mot
     for cle in dico_IDF.keys():
@@ -184,3 +184,59 @@ def score_tf_idf(repertoire):
                     dico_tf_idf[cle_idf].append(idf[cle_idf] * tf[cle_idf])
 
     return dico_tf_idf
+
+
+# Fonctionnalités ------------
+
+
+# Afficher la liste des mots les moins importants dans le corpus de documents
+def mots_non_important(repertoire):
+    dictionnaire_TF_IDF = score_tf_idf(repertoire)  # Appel du score TF-IDF de tous les mots du répertoire
+    liste_mots_non_important = []
+
+    for cle in dictionnaire_TF_IDF.keys():          # Vérification mot par mot des scores TF-IDF
+        valeur_nulle = 0
+        for i in range(0, len(dictionnaire_TF_IDF[cle])):          # Vérification des scores du mot dans chaque fichier
+
+            if dictionnaire_TF_IDF[cle][i] != 0:     # Vérification de la présence d'un score non-nul pour le mot
+                valeur_nulle = 1
+
+        if valeur_nulle == 0:       # Si le score TF-IDF est nul dans tous les fichiers, ajout dans la liste retournée
+            liste_mots_non_important.append(cle)
+
+    return liste_mots_non_important
+
+
+# Affiche le nombre de mots importants selon le score TF-IDF demandé par l'utilisateur
+def mots_importants(repertoire):
+    dictionnaire_TF_IDF = score_tf_idf(repertoire)  # Appel du score TF-IDF de tous les mots du répertoire
+    dictionnaire_TF_IDF_max = {}            # Dictionnaire gardant le meilleur score de chaque mot
+
+    liste_mots_important = []
+
+    nb_mots = int(input("Combien de mots importants voulez-vous afficher ? \n"))
+
+    for cle in dictionnaire_TF_IDF.keys():          # Vérification mot par mot des scores TF-IDF
+
+        score_max_mot = 0
+        for i in range(0, len(dictionnaire_TF_IDF[cle])):      # Vérification des scores du mot
+            if dictionnaire_TF_IDF[cle][i] > score_max_mot:
+                score_max_mot = dictionnaire_TF_IDF[cle][i]
+
+        dictionnaire_TF_IDF_max[cle] = score_max_mot       # Ajout du meilleur score du mot dans le dictionnaire
+
+    # Sélections du nombre de "meilleurs" mots demandés par l'utilisateur
+    for i in range(0, nb_mots):
+        mot_meilleur_score = [0, 0]        # Stocker le mot et le score IDF correspondant dans une liste pour comparer
+        for cle in dictionnaire_TF_IDF_max.keys():
+
+            if dictionnaire_TF_IDF_max[cle] > mot_meilleur_score[1]:
+                mot_meilleur_score[0] = cle
+                mot_meilleur_score[1] = dictionnaire_TF_IDF_max[cle]
+
+        # Mettre le score du mot choisi avant à 0 pour ne pas le reprendre
+        dictionnaire_TF_IDF_max[mot_meilleur_score[0]] = 0
+        # Ajout du mot au meilleur score dans la liste à retourner
+        liste_mots_important.append(mot_meilleur_score[0])
+
+    return liste_mots_important
