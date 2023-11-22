@@ -6,5 +6,10 @@ conversion_minuscule(fichiers)
 
 retrait_ponctuation(fichiers)
 
+#print(fichiers)
+#print(mots_plus_utiliser("cleaned/"))
+#stat_nation("cleaned/")
 
-print(mots_importants("cleaned/"))
+
+
+# Menu -------------

@@ -240,3 +240,94 @@ def mots_importants(repertoire):
         liste_mots_important.append(mot_meilleur_score[0])
 
     return liste_mots_important
+
+
+# Affiche les mots les plus répétés par un président
+def mots_plus_utiliser(repertoire):
+    fichiers = liste_fichiers(repertoire, ".txt")
+    liste_mot_repeter = []
+    score_tf_repeter = []
+
+    liste_presidents = extraction_nom(liste_fichiers(repertoire, ".txt"))
+
+    # Demander à l'utilisateur quel président analyser avec saisie sécurisée
+    president = 0
+    while president not in liste_presidents:
+        print("Quel président veux-tu analyser \n: ")
+        for noms in liste_presidents:
+            print(noms, ", ")
+        president = input()
+
+# Demander combien de mots à afficher
+    nombre_mots = int(input("Combien de mots ? \n"))
+
+    if "Nomination_"+president+".txt" in fichiers:     # Discours unique du président choisi
+        with open(repertoire+"Nomination_"+president+".txt", "r") as fichier:
+            texte = fichier.read()
+        score_tf = term_frequency(texte)
+
+        # Sélections du nombre de mots le plus répétés demandés par l'utilisateur
+        for i in range(0, nombre_mots):
+            score_meilleur_mot = [0, 0]  # Stocker le mot et le score TF correspondant dans une liste pour comparer
+            for cle in score_tf:
+
+                if score_tf[cle] > score_meilleur_mot[1]:
+                    score_meilleur_mot[0] = cle
+                    score_meilleur_mot[1] = score_tf[cle]
+
+            # Mettre le score du mot choisi avant à 0 pour ne pas le reprendre
+            score_tf[score_meilleur_mot[0]] = 0
+            # Ajout du mot au meilleur score dans la liste à retourner
+            liste_mot_repeter.append(score_meilleur_mot[0])
+
+        return liste_mot_repeter
+
+    else:                       # Discours 1 et 2 du président choisi
+
+        with open(repertoire+"Nomination_"+president+"1"+".txt", "r") as fichier:     # Discours 1
+            texte = fichier.read()
+        score_tf = term_frequency(texte)
+
+        # Sélections du nombre de mots le plus répétés demandés par l'utilisateur
+        for i in range(0, nombre_mots):
+            score_meilleur_mot_1 = [0, 0]  # Stocker le mot et le score TF correspondant dans une liste pour comparer
+            for cle in score_tf:
+
+                if score_tf[cle] > score_meilleur_mot_1[1]:
+                    score_meilleur_mot_1[0] = cle
+                    score_meilleur_mot_1[1] = score_tf[cle]
+
+            # Mettre le score du mot choisi avant à 0 pour ne pas le reprendre
+            score_tf[score_meilleur_mot_1[0]] = 0
+            liste_mot_repeter.append(score_meilleur_mot_1[0])
+            score_tf_repeter.append(score_meilleur_mot_1[1])
+
+        # Discours 2
+        with open(repertoire+"Nomination_"+president+"2"+".txt", "r") as fichier:
+            texte = fichier.read()
+        score_tf = term_frequency(texte)
+
+        # Sélections du nombre de mots le plus répétés demandés par l'utilisateur
+        for i in range(0, nombre_mots):
+            score_meilleur_mot_2 = [0, 0]  # Stocker le mot et le score TF correspondant dans une liste pour comparer
+            for cle in score_tf:
+
+                if score_tf[cle] > score_meilleur_mot_2[1]:
+                    score_meilleur_mot_2[0] = cle
+                    score_meilleur_mot_2[1] = score_tf[cle]
+
+            # Mettre le score du mot choisi avant à 0 pour ne pas le reprendre
+            score_tf[score_meilleur_mot_2[0]] = 0
+
+            # Comparer le TF du mot avec les TF des mots du premier discours, remplacer si supérieur
+            k = 0
+            while k < len(score_tf_repeter):
+                if (score_meilleur_mot_2[1] > score_tf_repeter[len(score_tf_repeter) - k - 1] and
+                        score_meilleur_mot_2[0] not in liste_mot_repeter):
+                    score_tf_repeter[len(score_tf_repeter) - k - 1] = score_meilleur_mot_2[1]
+                    liste_mot_repeter[len(liste_mot_repeter) - k - 1] = score_meilleur_mot_2[0]
+                    k = len(score_tf_repeter)
+                else:
+                    k += 1
+
+        return liste_mot_repeter
