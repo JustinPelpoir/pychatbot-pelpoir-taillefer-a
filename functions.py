@@ -152,7 +152,7 @@ def Inverse_Document_Frequency(repertoire):
 
     # Pour chaque mot dans les textes, calcul du poids du mot
     for cle in dico_IDF.keys():
-        dico_IDF[cle] = math.log10(len(fichiers) / (dico_IDF[cle]))
+        dico_IDF[cle] = math.log10(1 + (len(fichiers) / (dico_IDF[cle])))
 
     return dico_IDF
 
@@ -191,18 +191,39 @@ def score_tf_idf(repertoire):
 
 # Afficher la liste des mots les moins importants dans le corpus de documents
 def mots_non_important(repertoire):
-    dictionnaire_TF_IDF = score_tf_idf(repertoire)  # Appel du score TF-IDF de tous les mots du répertoire
-    liste_mots_non_important = []
+    dictionnaire_IDF = Inverse_Document_Frequency(repertoire)  # Appel du score IDF de tous les mots du répertoire
+    fichiers = liste_fichiers(repertoire, ".txt") # Appel des noms des fichiers du corpus
+    liste_mots_reparti = []     # Triage etape 1
+    liste_mots_non_important = []       # Triage final
 
-    for cle in dictionnaire_TF_IDF.keys():          # Vérification mot par mot des scores TF-IDF
-        valeur_nulle = 0
-        for i in range(0, len(dictionnaire_TF_IDF[cle])):          # Vérification des scores du mot dans chaque fichier
+    # Etape 1: Les mots moins importants sont présents dans la quasi-totalité du corpus => Vérification par le score IDF
+    for cle in dictionnaire_IDF.keys():
+        IDF_minimal = math.log10(1 + len(fichiers)/(len(fichiers) - 1))
+        if dictionnaire_IDF[cle] <= IDF_minimal:
+            liste_mots_reparti.append(cle)
 
-            if dictionnaire_TF_IDF[cle][i] != 0:     # Vérification de la présence d'un score non-nul pour le mot
-                valeur_nulle = 1
+    # Etape 2: Les mots moins importants ont un score TF importants dans quasi tous les fichiers du corpus
+    TF_mots = {}
+    for mot in liste_mots_reparti:              # Appel des mots issus du premier trie
+        TF_mots[mot] = []
+    for i in range(0, len(fichiers)):
+        with open(repertoire + fichiers[i], "r") as fichier:    # Ouverture de chaque texte un par un
+            texte = fichier.read()
+            tf = term_frequency(texte)  # Appel de la valeur TF des mots du texte analysé
 
-        if valeur_nulle == 0:       # Si le score TF-IDF est nul dans tous les fichiers, ajout dans la liste retournée
-            liste_mots_non_important.append(cle)
+        for cle in tf.keys():
+            if cle in TF_mots.keys():
+                TF_mots[cle].append(tf[cle])
+
+    # Calcul de la moyenne du TF de chaque mot du premier triage
+    for mot in TF_mots.keys():
+        moyenne = 0
+        for valeur_tf in TF_mots[mot]:
+            moyenne = moyenne + valeur_tf
+        moyenne = moyenne / len(TF_mots[mot])
+
+        if moyenne > 4:     # Si le mot apparait en moyenne plus de 4 fois par texte
+            liste_mots_non_important.append(mot)
 
     return liste_mots_non_important
 
