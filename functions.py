@@ -481,3 +481,4 @@ def mot_commun(repertoire):
             if mot not in liste_mots_lambda:  # vérifier que ce n'est pas un mon pas important
                 liste_mot_commun.add(mot)  # ajouter les mots dit par tous les présidents à la liste
     return liste_mot_commun
+

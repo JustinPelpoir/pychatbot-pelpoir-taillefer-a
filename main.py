@@ -48,4 +48,4 @@ while a == 0:
         if choix == 2:
             x = int(input("Êtes-vous sûr de vouloir fermer le Chatbot ? 1: Oui ; 2: Non\n"))
             if x == 1:
-                a = 1           # Etat "Off"
+                a = 1           # etat "Off"
