@@ -6,6 +6,7 @@ fichiers = liste_fichiers("speeches", ".txt")
 conversion_minuscule(fichiers)
 
 retrait_ponctuation(fichiers)
+score_tf_idf("cleaned/")
 
 
 # Menu -------------
@@ -25,7 +26,12 @@ while a == 0:
           "0: Fermer le Chatbot\n\n"
           )
 
-    choix = int(input("Votre choix : "))
+    choix = input("Votre choix : ")
+    while type(choix) is not int:  # saisie sécurisée
+        try:
+            choix = int(choix)
+        except ValueError:
+            choix = input("Votre choix : ")
 
     if choix == 1:
         print(mots_non_important("cleaned/"))
@@ -38,15 +44,31 @@ while a == 0:
     elif choix == 5:
         print(premier_president("cleaned/"))
     elif choix == 6:
-        print(mot_commun("cleaned/"))
+        print(mot_commun("cleaned/"))  
     elif choix == 0:
-        x = int(input("Êtes-vous sûr de vouloir fermer le Chatbot ? 1: Oui ; 2: Non"))
+        x = input("Êtes-vous sûr de vouloir fermer le Chatbot ? 1: Oui ; 2: Non : ")
+        while type(x) is not int:  # saisie sécurisée
+            try:
+                x = int(x)
+            except ValueError:
+                x = input("Êtes-vous sûr de vouloir fermer le Chatbot ? 1: Oui ; 2: Non : \n")
         if x == 1:
             a = 1       # Etat "Off"
 
     if choix != 0:
-        choix = int(input("Retour au menu ? 1: Oui ; 2: Non\n"))
+        choix = input("Retour au menu ? 1: Oui ; 2: Non\n")
+        while type(choix) is not int:  # saisie sécurisée
+            try:
+                choix = int(choix)
+            except ValueError:
+                choix = input("Retour au menu ? 1: Oui ; 2: Non\n")
+
         if choix == 2:
-            x = int(input("Êtes-vous sûr de vouloir fermer le Chatbot ? 1: Oui ; 2: Non\n"))
+            x = input("Êtes-vous sûr de vouloir fermer le Chatbot ? 1: Oui ; 2: Non : \n")
+            while type(x) is not int:  # saisie sécurisée
+                try:
+                    x = int(x)
+                except ValueError:
+                    x = input("Êtes-vous sûr de vouloir fermer le Chatbot ? 1: Oui ; 2: Non : \n")
             if x == 1:
-                a = 1           # etat "Off"
+                a = 1           # Etat "Off"
