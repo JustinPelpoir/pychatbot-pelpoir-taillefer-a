@@ -419,7 +419,7 @@ def premier_president(repertoire):
                     if i < len(mots):  # sécurité si le mot n'y est pas
                         rapid[nom] = i  # mettre le rang dans un dictionnaire
             # deuxième discours
-            with open("cleaned/" + "Nomination_" + nom + "1" + ".txt", "r", encoding='utf-8') as fichier:
+            with open("cleaned/" + "Nomination_" + nom + "2" + ".txt", "r", encoding='utf-8') as fichier:
                 texte = fichier.read()
                 if mot_cherche in texte:  # vérifier que le mot soit dans le texte
                     mots = texte.split()
