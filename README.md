@@ -1,10 +1,10 @@
-# pychatbot-pelpoir-taillefer-a
+Lien vers le dépôt Github : https://github.com/JustinPelpoir/pychatbot-pelpoir-taillefer-a
 
-il y a un prblème ave l'historique des modification, seul une partie s'affiche dans l'historique.
-l'historique complet se trouve dans la catégorie "Activity".
+il y a un problème avec l'historique des modification, seul une partie s'affiche dans l'historique.
+L'historique complet se trouve dans la catégorie "Activity".
+------------------------------------------------------------------
 
-
-Equipe du projet:
+===== Equipe du projet:
 PELPOIR Justin, TAILLEFER Victor
 
 Ce programme contient 6 fonctionnalités principales:
@@ -21,16 +21,14 @@ Ce programme contient 6 fonctionnalités principales:
   -6-Indiquer quel(s) est(sont) le(s) mot(s) que tous les présidents ont évoqués
 
 
+  ===== UTILISATION :
+  Pour utiliser le programme il suffit de suivre les indications données par la console et sélectionner une fonctionnalité en entrant la valeur associée.
+  
+  Pour la 2ème fonction il faut ensuite entrer le nombre de mot que l'on souhaite obtenir.
 
-  pour utiliser le programme il suffit de suivre es indications données par la console et séléctionner une fonctionnalité en entrant sa valeur associée
+  Pour la 3ème fonction, sélectionner le président que l'on souhaite étudier en entrant son nom dans la console de la même manière qu'écrit par la console au dessus, puis sélectionner de la même manière que la 2ème fonctionnalité le nombre de mot demandé.
   
-  pour la 2ème fonction il faut ensuite entrer le nombre de mot que l'on souhaite obtenir
-
-  pour la 3ème fonction il faut séléctionner le président que l'on souhait étudier en entrant son nom dans la console de la même manière qu'écrit par la console au dessus  puis il faut séléctionner de la même manière que la 2éme fonctionnalité le nmbre de mot demandé
+  Pour la 4ème et 5ème fonction, entrer le mot que l'on souhaite étudier dans la console.
   
-  pour la 4ème fonction il faut entrer le mot que l'on souhaite étudier dans la console
-  
-  pour la 5ème fonction le fonctionnement est le même que la fonction 4
-  
-  la fonction 1 et 6 ne demande pas d'autre mannipulation que de les séléctionner 
+  Les fonctions 1 et 6 ne demandent aucune manipulation supplémentaire.
   
