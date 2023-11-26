@@ -236,7 +236,12 @@ def mots_importants(repertoire):
 
     liste_mots_important = []
 
-    nb_mots = int(input("Combien de mots au score TF-IDF élevé voulez-vous afficher ? \n"))
+    nb_mots = input("Combien de mots au score TF-IDF élevé voulez-vous afficher ? \n")
+    while type(nb_mots) is not int:  # saisie sécurisée
+        try:
+            nb_mots = int(nb_mots)
+        except ValueError:
+            nb_mots = input("Combien de mots au score TF-IDF élevé voulez-vous afficher ? \n")
 
     for cle in dictionnaire_TF_IDF.keys():          # Vérification mot par mot des scores TF-IDF
 
@@ -281,7 +286,12 @@ def mots_plus_utiliser(repertoire):
         president = input()
 
 # Demander combien de mots à afficher
-    nombre_mots = int(input("Combien de mots ? \n"))
+    nombre_mots = input("Combien de mots ? \n")
+    while type(nombre_mots) is not int:  # saisie sécurisée
+        try:
+            nombre_mots = int(nombre_mots)
+        except ValueError:
+            nombre_mots = input("Combien de mots ? \n")
 
     if "Nomination_"+president+".txt" in fichiers:     # Discours unique du président choisi
         with open(repertoire+"Nomination_"+president+".txt", "r", encoding='utf-8') as fichier:
@@ -481,4 +491,3 @@ def mot_commun(repertoire):
             if mot not in liste_mots_lambda:  # vérifier que ce n'est pas un mon pas important
                 liste_mot_commun.add(mot)  # ajouter les mots dit par tous les présidents à la liste
     return liste_mot_commun
-
