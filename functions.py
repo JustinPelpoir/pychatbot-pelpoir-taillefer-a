@@ -69,16 +69,17 @@ def retrait_ponctuation(liste_noms_fichier):
                                                  133, 145, 146,
                                                  147, 148, 149,
                                                  ]
-                    # Code ASCII de "-" et l'apostrophe
-                    liste_ponctuation_speciale = [39, 45]
 
                     # Remplacer les ponctuations par un blanc
                     if ord(caractere) in liste_ponctuation_retrait:
                         fichier.write("")
 
-                    # Remplacer "-" et apostrophes par un espace
-                    elif ord(caractere) in liste_ponctuation_speciale:
+                    # Remplacer "-"  par un espace
+                    elif ord(caractere) == 45:
                         fichier.write(" ")
+                    # Remplacer les apostrophe par "e "
+                    elif ord(caractere) == 39:
+                        fichier.write("e ")
                     else:
                         fichier.write(caractere)
 
@@ -98,7 +99,7 @@ def prenoms(liste_noms_presidents):
     return liste_noms_presidents
 
 
-# fonction pour déterminer un dictionaire avec chaque mot associés à leur occurrence
+# fonction pour déterminer un dictionnaire avec chaque mot associé à son occurrence
 def term_frequency(chaine):
     # Diviser la chaine de caractère en une liste de mots
     mots = chaine.split()
@@ -192,17 +193,17 @@ def score_tf_idf(repertoire):
 # Afficher la liste des mots les moins importants dans le corpus de documents
 def mots_non_important(repertoire):
     dictionnaire_IDF = Inverse_Document_Frequency(repertoire)  # Appel du score IDF de tous les mots du répertoire
-    fichiers = liste_fichiers(repertoire, ".txt") # Appel des noms des fichiers du corpus
+    fichiers = liste_fichiers(repertoire, ".txt")    # Appel des noms des fichiers du corpus
     liste_mots_reparti = []     # Triage etape 1
     liste_mots_non_important = []       # Triage final
 
-    # Etape 1: Les mots moins importants sont présents dans la quasi-totalité du corpus => Vérification par le score IDF
+    # Etape 1 : Les mots moins importants sont présents dans la quasi-totalité du corpus => Vérification par le score IDF
     for cle in dictionnaire_IDF.keys():
         IDF_minimal = math.log10(1 + len(fichiers)/(len(fichiers) - 1))
         if dictionnaire_IDF[cle] <= IDF_minimal:
             liste_mots_reparti.append(cle)
 
-    # Etape 2: Les mots moins importants ont un score TF importants dans quasi tous les fichiers du corpus
+    # Etape 2 : Les mots moins importants ont un score TF importants dans quasi tous les fichiers du corpus
     TF_mots = {}
     for mot in liste_mots_reparti:              # Appel des mots issus du premier trie
         TF_mots[mot] = []
@@ -235,7 +236,7 @@ def mots_importants(repertoire):
 
     liste_mots_important = []
 
-    nb_mots = int(input("Combien de mots importants voulez-vous afficher ? \n"))
+    nb_mots = int(input("Combien de mots au score TF-IDF élevé voulez-vous afficher ? \n"))
 
     for cle in dictionnaire_TF_IDF.keys():          # Vérification mot par mot des scores TF-IDF
 
@@ -352,3 +353,131 @@ def mots_plus_utiliser(repertoire):
                     k += 1
 
         return liste_mot_repeter
+
+
+#  affiche les noms des présidents qui ont parlé d'un mot et donne le nombre de fois qu'ils l'ont dit
+def stat_mot(repertoire):
+    liste_noms_fichier = liste_fichiers(repertoire, ".txt")
+    nbr_mot_president = {}
+    mot_demande = input("Entrez le mot a rechercher : ")
+    for nom in extraction_nom(liste_noms_fichier):  # determiner quels presidents a parle du mot
+
+        if nom == "Chirac" or nom == "Mitterrand":  # pour les presidents qui ont deux discours
+            with open("cleaned/" + "Nomination_" + nom + "1" + ".txt", "r", encoding='utf-8') as fichier:
+                texte = fichier.read()
+
+                if mot_demande in texte:  # determiner quels presidents a parle du mot
+                    dico = term_frequency(texte)
+                    for cle in dico.keys():
+                        if cle == mot_demande:
+                            # ajoute le nombre de fois que le mot a été prononcé
+                            nbr_mot_president[nom] = dico[cle]
+                    presidentbis = 1  # pour signifier que le premier discours contient le mot
+                else:
+                    presidentbis = 0
+
+            with open("cleaned/" + "Nomination_" + nom + "2" + ".txt", "r", encoding='utf-8') as fichier:
+                texte = fichier.read()
+                if mot_demande in texte:  # determiner quels presidents a parle du mot
+                    dico = term_frequency(texte)
+                    for cle in dico.keys():
+                        if cle == mot_demande:
+                            if presidentbis == 0:
+                                nbr_mot_president[nom] = dico[cle]  # ajoute le nombre de fois que le mot a été prononcé
+                            elif presidentbis == 1:
+                                for key in nbr_mot_president.keys():
+                                    if key == nom:
+                                        nbr_mot_president[key] = dico[cle] + nbr_mot_president[key]
+
+        else:  # pour les presidents n'ayant qu'un discours
+            with open("cleaned/" + "Nomination_" + nom + ".txt", "r", encoding='utf-8') as fichier:
+                texte = fichier.read()
+                if mot_demande in texte:
+                    dico = term_frequency(texte)
+                    for cle in dico.keys():
+                        if cle == mot_demande:
+                            nbr_mot_president[nom] = dico[cle]  # ajoute le nombre de fois que le mot a été prononcé
+
+    return nbr_mot_president
+
+
+# fonctionnalité donnant le premier president à parler d'un mot
+def premier_president(repertoire):
+    mot_cherche = input("donner le mot à rechercher : ")
+    liste_noms_fichier = liste_fichiers(repertoire, ".txt")
+    rapid = {}
+    for nom in extraction_nom(liste_noms_fichier):
+        if nom == "Chirac" or nom == "Mitterrand":  # pour les presidents qui ont deux discours
+            # premier discours
+            with open("cleaned/" + "Nomination_" + nom + "1" + ".txt", "r", encoding='utf-8') as fichier:
+                texte = fichier.read()
+                if mot_cherche in texte:  # vérifier que le mot soit dans le texte
+                    mots = texte.split()
+                    i = 0
+                    while mots[i] != mot_cherche and i < (len(mots)-1):  # trouver le rang du mot
+                        i += 1
+                    if i < len(mots):  # sécurité si le mot n'y est pas
+                        rapid[nom] = i  # mettre le rang dans un dictionnaire
+            # deuxième discours
+            with open("cleaned/" + "Nomination_" + nom + "1" + ".txt", "r", encoding='utf-8') as fichier:
+                texte = fichier.read()
+                if mot_cherche in texte:  # vérifier que le mot soit dans le texte
+                    mots = texte.split()
+                    i = 0
+                    while mots[i] != mot_cherche and i < (len(mots)-1):  # trouver le rang du mot
+                        i += 1
+                    if i < len(mots):  # sécurité si le mot n'y est pas
+                        rapid[nom] = i  # mettre le rang dans un dictionnaire
+
+        else:  # pour les presidents n'ayant qu'un discours
+            with open("cleaned/" + "Nomination_" + nom + ".txt", "r", encoding='utf-8') as fichier:
+                texte = fichier.read()
+                if mot_cherche in texte:  # vérifier que le mot soit dans le texte
+                    mots = texte.split()
+                    i = 0
+                    while mots[i] != mot_cherche and i < (len(mots)-1):  # trouver le rang du mot
+                        i += 1
+                    if i < len(mots):  # sécurité si le mot n'y est pas
+                        rapid[nom] = i  # mettre le rang dans un dictionnaire
+
+    if rapid == {}:  # cas où aucun président n'a parlé de ce mot
+        return "Aucun président n'a dit ce mot."
+    else:
+        best = 9999999999999
+        for cle in rapid:  # détermine quel président a parlé du mot le plus rapidement
+            if rapid[cle] < best:
+                best = rapid[cle]
+                bestpresident = cle
+        return bestpresident, "a dit ce mot le plus vite dans son discours."
+
+
+# fonctionnalité qui donne les mots dit par tous les présidents qui ne sont pas des mots "non important"
+def mot_commun(repertoire):
+    liste_noms_fichier = liste_fichiers(repertoire, ".txt")
+    list_mots = []  # liste des listes de tous les mots
+    for nom in extraction_nom(liste_noms_fichier):
+        if nom == "Chirac" or nom == "Mitterrand":  # pour les presidents qui ont deux discours
+            with open("cleaned/" + "Nomination_" + nom + "1" + ".txt", "r", encoding='utf-8') as fichier:
+                # premier discours
+                texte = fichier.read()
+                list_mots.append(texte.split())  # ajoute la liste des mots dans la liste complète
+            # deuxième discours
+            with open("cleaned/" + "Nomination_" + nom + "2" + ".txt", "r", encoding='utf-8') as fichier:
+                texte = fichier.read()
+                list_mots.append(texte.split())  # ajoute la liste des mots dans la liste complète
+        else:  # pour les presidents n'ayant qu'un discours
+            with open("cleaned/" + "Nomination_" + nom + ".txt", "r", encoding='utf-8') as fichier:
+                texte = fichier.read()
+                list_mots.append(texte.split())  # ajoute la liste des mots dans la liste complète
+    liste_mots_lambda = mots_non_important(repertoire)
+    liste_mot_commun = set()  # set des mots prononcés par tous les présidents
+    for mot in list_mots[0]:
+        cpt = 0  # compteur pour vérifier que le mot soit dans tou les discours
+        for i in range(1, len(list_mots)):
+            if mot in list_mots[i]:
+                cpt += 1  # incrémentation pour chaque texte dans lequel le mot est
+
+        if cpt == 7:
+            if mot not in liste_mots_lambda:  # vérifier que ce n'est pas un mon pas important
+                liste_mot_commun.add(mot)  # ajouter les mots dit par tous les présidents à la liste
+    return liste_mot_commun
