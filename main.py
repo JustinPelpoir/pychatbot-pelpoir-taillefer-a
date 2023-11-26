@@ -1,3 +1,4 @@
+# l'historique des modification n'est pas complet dans l'historique des commit. Il faut regarder l'historique des activités pour voir l'ensemble des modifications.
 from functions import *
 
 fichiers = liste_fichiers("speeches", ".txt")
