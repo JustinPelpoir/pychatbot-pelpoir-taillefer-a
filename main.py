@@ -17,7 +17,7 @@ while a == 0:
           "----------\n"      
           "Menu :  Pour accéder à une fonctionnalité, entrez le numéro qui lui est associé\n\n"
           "1: Afficher la liste des mots les moins importants dans le corpus\n"
-          "2: Afficher le(s) mot(s) les plus importants\n"
+          "2: Afficher le(s) mot(s) ayant le score TF-IDF le plus élevé(s)\n"
           "3: Afficher le(s) mot(s) le(s) plus répété(s) par un président\n"
           "4: Indiquer le(s) nom(s) du (des) président(s) qui a "
           "(ont) utilisé un mot et combien de fois il(s) l'a(ont) répété \n"
