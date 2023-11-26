@@ -132,7 +132,7 @@ def Inverse_Document_Frequency(repertoire):
     for i in range(0, len(fichiers)):
 
         # Lecture du fichier texte
-        with open(repertoire+fichiers[i], "r") as fichier:
+        with open(repertoire+fichiers[i], "r", encoding='utf-8') as fichier:
             texte = fichier.read()
 
         mots = texte.split()
@@ -171,7 +171,7 @@ def score_tf_idf(repertoire):
     for i in range(0, len(fichiers)):
 
         # Ouverture de chaque texte un par un
-        with open(repertoire+fichiers[i], "r") as fichier:
+        with open(repertoire+fichiers[i], "r", encoding='utf-8') as fichier:
             texte = fichier.read()
             tf = term_frequency(texte)      # Appel de la valeur TF des mots du texte analysé
 
@@ -207,7 +207,7 @@ def mots_non_important(repertoire):
     for mot in liste_mots_reparti:              # Appel des mots issus du premier trie
         TF_mots[mot] = []
     for i in range(0, len(fichiers)):
-        with open(repertoire + fichiers[i], "r") as fichier:    # Ouverture de chaque texte un par un
+        with open(repertoire + fichiers[i], "r", encoding='utf-8') as fichier:    # Ouverture de chaque texte un par un
             texte = fichier.read()
             tf = term_frequency(texte)  # Appel de la valeur TF des mots du texte analysé
 
@@ -283,7 +283,7 @@ def mots_plus_utiliser(repertoire):
     nombre_mots = int(input("Combien de mots ? \n"))
 
     if "Nomination_"+president+".txt" in fichiers:     # Discours unique du président choisi
-        with open(repertoire+"Nomination_"+president+".txt", "r") as fichier:
+        with open(repertoire+"Nomination_"+president+".txt", "r", encoding='utf-8') as fichier:
             texte = fichier.read()
         score_tf = term_frequency(texte)
 
@@ -305,7 +305,7 @@ def mots_plus_utiliser(repertoire):
 
     else:                       # Discours 1 et 2 du président choisi
 
-        with open(repertoire+"Nomination_"+president+"1"+".txt", "r") as fichier:     # Discours 1
+        with open(repertoire+"Nomination_"+president+"1"+".txt", "r", encoding='utf-8') as fichier:     # Discours 1
             texte = fichier.read()
         score_tf = term_frequency(texte)
 
@@ -324,7 +324,7 @@ def mots_plus_utiliser(repertoire):
             score_tf_repeter.append(score_meilleur_mot_1[1])
 
         # Discours 2
-        with open(repertoire+"Nomination_"+president+"2"+".txt", "r") as fichier:
+        with open(repertoire+"Nomination_"+president+"2"+".txt", "r", encoding='utf-8') as fichier:
             texte = fichier.read()
         score_tf = term_frequency(texte)
 
