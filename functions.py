@@ -2,6 +2,7 @@ import os
 import math
 
 
+# Fonctions analyse texte
 # Extraire les noms des fichiers texte
 def liste_fichiers(repertoire, extension):
 
@@ -153,7 +154,7 @@ def Inverse_Document_Frequency(repertoire):
 
     # Pour chaque mot dans les textes, calcul du poids du mot
     for cle in dico_IDF.keys():
-        dico_IDF[cle] = math.log10(1 + (len(fichiers) / (dico_IDF[cle])))
+        dico_IDF[cle] = math.log10((len(fichiers) / (dico_IDF[cle])))
 
     return dico_IDF
 
@@ -185,6 +186,83 @@ def score_tf_idf(repertoire):
                     dico_tf_idf[cle_idf].append(idf[cle_idf] * tf[cle_idf])
 
     return dico_tf_idf
+
+
+
+
+
+# Fonctions analyse questions
+def mots_questions(question):
+    question_minuscule = ""
+    question_clean = ""
+    liste_mot_question = []
+
+    # Conversion minuscule
+    for mot in question:
+        for caractere in mot:
+            if ord(caractere) >= 65 and ord(caractere) <= 90:
+                question_minuscule = question_minuscule + chr(ord(caractere) + 32)
+            else:
+                question_minuscule = question_minuscule + caractere
+
+    # Retraits ponctuations
+    for mot in question_minuscule:
+        for caractere in mot:
+
+            # Code ASCII des ponctuations
+            liste_ponctuation_retrait = [33, 34, 44,
+                                         46, 58, 59, 63,
+                                         96, 130, 132,
+                                         133, 145, 146,
+                                         147, 148, 149,
+                                         ]
+
+            # Remplacer les ponctuations par un blanc
+            if ord(caractere) in liste_ponctuation_retrait:
+                question_clean = question_clean + ""
+
+            # Remplacer "-"  par un espace
+            elif ord(caractere) == 45:
+                question_clean = question_clean + " "
+            # Remplacer les apostrophe par "e "
+            elif ord(caractere) == 39:
+                question_clean = question_clean + "e "
+            else:
+                question_clean = question_clean + caractere
+
+    liste_mot_question = question_clean.split(" ")
+
+    return liste_mot_question
+
+
+# Fonctions identification des mots et dans la question et dans le corpus de documents
+def correspondance_question_textes(liste_mot_question):
+    fichiers = liste_fichiers("cleaned/", ".txt")
+    mots_dans_texte = set()
+
+    for i in range(0, len(fichiers)):
+
+        # Lecture du fichier texte
+        with open("cleaned/"+fichiers[i], "r", encoding='utf-8') as fichier:
+            texte = fichier.read()
+            mots_texte = texte.split(" ")
+
+        for mot in liste_mot_question:
+            if mot in mots_texte:
+                mots_dans_texte.add(mot)
+    
+    # Si la liste est vide, donc s'il n'y a aucun mot de la question dans le corpus
+    if mots_dans_texte == set():
+        return "Pouvez répéter la question ? STEPHANIE DE MONACO !"
+    else:
+        return mots_dans_texte
+
+
+
+
+
+
+
 
 
 # Fonctionnalités ------------

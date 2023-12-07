@@ -10,9 +10,9 @@ retrait_ponctuation(fichiers)
 # Menu -------------
 a = 0  # Etat "On"
 while a == 0:
-    print("===== ChatBot : v0.1 =====\n"
+    print("===== ChatBot : v0.2 =====\n"
           "Ce Chatbot est en cours de développement, des bugs sont susceptibles de se produire.\n\n"
-          "----------\n"      
+          "----------\n"
           "Menu :  Pour accéder à une fonctionnalité, entrez le numéro qui lui est associé\n\n"
           "1: Afficher la liste des mots les moins importants dans le corpus\n"
           "2: Afficher le(s) mot(s) les plus importants\n"
@@ -24,7 +24,12 @@ while a == 0:
           "0: Fermer le Chatbot\n\n"
           )
 
-    choix = int(input("Votre choix : "))
+    choix = input("Votre choix : ")
+    while type(choix) is not int:
+        try:
+            choix = int(choix)
+        except ValueError:
+            choix = input("Votre choix : ")
 
     if choix == 1:
         print(mots_non_important("cleaned/"))
@@ -38,14 +43,31 @@ while a == 0:
         print(premier_president("cleaned/"))
     elif choix == 6:
         print(mot_commun("cleaned/"))
+
     elif choix == 0:
-        x = int(input("Êtes-vous sûr de vouloir fermer le Chatbot ? 1: Oui ; 2: Non"))
+        x = input("Êtes-vous sûr de vouloir fermer le Chatbot ? 1: Oui ; 2: Non : ")
+        while type(x) is not int:
+            try:
+                x = int(x)
+            except ValueError:
+                x = input("Êtes-vous sûr de vouloir fermer le Chatbot ? 1: Oui ; 2: Non : \n")
         if x == 1:
-            a = 1       # Etat "Off"
+            a = 1  # Etat "Off"
 
     if choix != 0:
-        choix = int(input("Retour au menu ? 1: Oui ; 2: Non\n"))
+        choix = input("Retour au menu ? 1: Oui ; 2: Non\n")
+        while type(choix) is not int:
+            try:
+                choix = int(choix)
+            except ValueError:
+                choix = input("Retour au menu ? 1: Oui ; 2: Non\n")
+
         if choix == 2:
-            x = int(input("Êtes-vous sûr de vouloir fermer le Chatbot ? 1: Oui ; 2: Non\n"))
+            x = input("Êtes-vous sûr de vouloir fermer le Chatbot ? 1: Oui ; 2: Non : \n")
+            while type(x) is not int:
+                try:
+                    x = int(x)
+                except ValueError:
+                    x = input("Êtes-vous sûr de vouloir fermer le Chatbot ? 1: Oui ; 2: Non : \n")
             if x == 1:
-                a = 1           # etat "Off"
+                a = 1  # Etat "Off"
