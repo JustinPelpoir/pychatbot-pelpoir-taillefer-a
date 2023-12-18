@@ -504,3 +504,104 @@ def mot_commun(repertoire):
             if mot not in liste_mots_lambda:  # vérifier que ce n'est pas un mon pas important
                 liste_mot_commun.add(mot)  # ajouter les mots dit par tous les présidents à la liste
     return liste_mot_commun
+
+# question réponse ------------
+
+# Fonctions analyse questions
+def mots_questions(question):
+    question_minuscule = ""
+    question_clean = ""
+
+    # Conversion minuscule
+    for mot in question:
+        for caractere in mot:
+            if ord(caractere) >= 65 and ord(caractere) <= 90:
+                question_minuscule = question_minuscule + chr(ord(caractere) + 32)
+            else:
+                question_minuscule = question_minuscule + caractere
+
+    # Retrait des ponctuations
+    for mot in question_minuscule:
+        for caractere in mot:
+
+            # Code ASCII des ponctuations
+            liste_ponctuation_retrait = [33, 34, 44,
+                                         46, 58, 59, 63,
+                                         96, 130, 132,
+                                         133, 145, 146,
+                                         147, 148, 149,
+                                         ]
+
+            # Remplacer les ponctuations par un blanc
+            if ord(caractere) in liste_ponctuation_retrait:
+                question_clean += ""
+
+            # Remplacer "-"  par un espace
+            elif ord(caractere) == 45:
+                question_clean += " "
+            # Remplacer les apostrophe par "e "
+            elif ord(caractere) == 39:
+                question_clean += "e "
+            else:
+                question_clean += caractere
+
+    liste_mot_question = question_clean.split(" ")
+
+    return liste_mot_question
+
+# Fonctions identification des mots et dans la question et dans le corpus de documents
+def correspondance_question_textes(liste_mot_question):
+    fichiers = liste_fichiers("cleaned/", ".txt")
+    mots_dans_texte = set()
+
+    for i in range(0, len(fichiers)):
+
+        # Lecture du fichier texte
+        with open("cleaned/" + fichiers[i], "r", encoding='utf-8') as fichier:
+            texte = fichier.read()
+            mots_texte = texte.split()
+
+        for mot in liste_mot_question:
+            if mot in mots_texte:
+                mots_dans_texte.add(mot)
+
+    # Si la liste est vide, donc s'il n'y a aucun mot de la question dans le corpus
+    if mots_dans_texte == set():
+        return "oops"
+    else:
+        return mots_dans_texte
+
+# TF-IDF de la question
+def tf_idf_question(question):
+    # Appel des valeurs IDF de tous les mots du corpus ET de la liste des mots dans le corpus
+    idf = inverse_document_frequency("cleaned/")
+
+    liste_mot_question = mots_questions(question)
+    mots_dans_texte = correspondance_question_textes(liste_mot_question)
+
+    question_minuscule = ""  # Concaténation des mots en minuscule et sans ponctuation de la question
+    for mot in liste_mot_question:
+        question_minuscule = question_minuscule + " " + mot
+
+    tf_mots = {}
+    tf_idf_mots = {}
+
+    # Calcul du TF de chaque mot du corpus dans la question
+    tf_question = term_frequency(question_minuscule)
+
+    for key in idf.keys():  # Appeler tous les mots du corpus
+        if key not in liste_mot_question:  # Si mot du corpus absent de la question, TF = 0
+            tf_mots[key] = 0.0
+
+        elif key in liste_mot_question:  # Si mot du corpus dans la question
+
+            for mot in tf_question.keys():
+                if mot in mots_dans_texte:  # Si mot de la question dans le corpus, ajout du TF du mot dans la question
+                    tf_mots[mot] = tf_question[mot]
+
+    # Calcul IDF de chaque mot du corpus dans la question
+    for mot in tf_mots:
+        tf_idf_mots[mot] = tf_mots[mot] * idf[mot]  # Produit des TF dans la question et des IDF de chaque mot = TF-IDF
+
+    return tf_idf_mots
+    
