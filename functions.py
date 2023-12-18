@@ -104,7 +104,7 @@ def prenoms(liste_noms_presidents):
 def term_frequency(chaine):
     # Diviser la chaine de caractère en une liste de mots
     mots = chaine.split()
-    dico_TF = {}     # dictionnaire
+    dico_tf = {}     # dictionnaire
     mots_check = []
 
     for i in range(0, len(mots)):
@@ -121,13 +121,13 @@ def term_frequency(chaine):
             mots_check.append(mots[i])
 
             # Association de chaque mot à son nombre d'occurrences
-            dico_TF[mots[i]] = occurrence
+            dico_tf[mots[i]] = occurrence
 
-    return dico_TF
+    return dico_tf
 
 
-def Inverse_Document_Frequency(repertoire):
-    dico_IDF = {}
+def inverse_document_frequency(repertoire):
+    dico_idf = {}
     fichiers = liste_fichiers(repertoire, ".txt")
 
     # Pour chaque fichier texte, vérification de la présence des mots
@@ -144,19 +144,19 @@ def Inverse_Document_Frequency(repertoire):
             # Vérifier si un mot n'a pas déjà été analysé dans le même fichier texte
             if mots[k] not in mots_check:
                 # Vérifier si le mot est déjà dans un autre fichier
-                if mots[k] in dico_IDF.keys():
-                    dico_IDF[mots[k]] += 1
+                if mots[k] in dico_idf.keys():
+                    dico_idf[mots[k]] += 1
                 else:
-                    dico_IDF[mots[k]] = 1
+                    dico_idf[mots[k]] = 1
 
                 # Ajout du mot dans la liste des mots analysés
                 mots_check.append(mots[k])
 
     # Pour chaque mot dans les textes, calcul du poids du mot
-    for cle in dico_IDF.keys():
-        dico_IDF[cle] = math.log10((len(fichiers) / (dico_IDF[cle])))
+    for cle in dico_idf.keys():
+        dico_idf[cle] = math.log10((len(fichiers) / (dico_idf[cle])))
 
-    return dico_IDF
+    return dico_idf
 
 
 def score_tf_idf(repertoire):
@@ -164,7 +164,7 @@ def score_tf_idf(repertoire):
     fichiers = liste_fichiers(repertoire, ".txt")
 
     # Appeler la valeur IDF de chacun des mots dans les textes du répertoire
-    idf = Inverse_Document_Frequency(repertoire)
+    idf = inverse_document_frequency(repertoire)
 
     # Création d'une liste pour chaque mot stockant le score TF-IDF pour chaque document
     for cle in idf.keys():
@@ -188,118 +188,41 @@ def score_tf_idf(repertoire):
     return dico_tf_idf
 
 
-
-
-
-# Fonctions analyse questions
-def mots_questions(question):
-    question_minuscule = ""
-    question_clean = ""
-    liste_mot_question = []
-
-    # Conversion minuscule
-    for mot in question:
-        for caractere in mot:
-            if ord(caractere) >= 65 and ord(caractere) <= 90:
-                question_minuscule = question_minuscule + chr(ord(caractere) + 32)
-            else:
-                question_minuscule = question_minuscule + caractere
-
-    # Retraits ponctuations
-    for mot in question_minuscule:
-        for caractere in mot:
-
-            # Code ASCII des ponctuations
-            liste_ponctuation_retrait = [33, 34, 44,
-                                         46, 58, 59, 63,
-                                         96, 130, 132,
-                                         133, 145, 146,
-                                         147, 148, 149,
-                                         ]
-
-            # Remplacer les ponctuations par un blanc
-            if ord(caractere) in liste_ponctuation_retrait:
-                question_clean = question_clean + ""
-
-            # Remplacer "-"  par un espace
-            elif ord(caractere) == 45:
-                question_clean = question_clean + " "
-            # Remplacer les apostrophe par "e "
-            elif ord(caractere) == 39:
-                question_clean = question_clean + "e "
-            else:
-                question_clean = question_clean + caractere
-
-    liste_mot_question = question_clean.split(" ")
-
-    return liste_mot_question
-
-
-# Fonctions identification des mots et dans la question et dans le corpus de documents
-def correspondance_question_textes(liste_mot_question):
-    fichiers = liste_fichiers("cleaned/", ".txt")
-    mots_dans_texte = set()
-
-    for i in range(0, len(fichiers)):
-
-        # Lecture du fichier texte
-        with open("cleaned/"+fichiers[i], "r", encoding='utf-8') as fichier:
-            texte = fichier.read()
-            mots_texte = texte.split(" ")
-
-        for mot in liste_mot_question:
-            if mot in mots_texte:
-                mots_dans_texte.add(mot)
-    
-    # Si la liste est vide, donc s'il n'y a aucun mot de la question dans le corpus
-    if mots_dans_texte == set():
-        return "Pouvez répéter la question ? STEPHANIE DE MONACO !"
-    else:
-        return mots_dans_texte
-
-
-
-
-
-
-
-
-
 # Fonctionnalités ------------
 
 
 # Afficher la liste des mots les moins importants dans le corpus de documents
 def mots_non_important(repertoire):
-    dictionnaire_IDF = Inverse_Document_Frequency(repertoire)  # Appel du score IDF de tous les mots du répertoire
+    dictionnaire_idf = inverse_document_frequency(repertoire)  # Appel du score IDF de tous les mots du répertoire
     fichiers = liste_fichiers(repertoire, ".txt")    # Appel des noms des fichiers du corpus
     liste_mots_reparti = []     # Triage etape 1
     liste_mots_non_important = []       # Triage final
 
-    # Etape 1 : Les mots moins importants sont présents dans la quasi-totalité du corpus => Vérification par le score IDF
-    for cle in dictionnaire_IDF.keys():
-        IDF_minimal = math.log10(1 + len(fichiers)/(len(fichiers) - 1))
-        if dictionnaire_IDF[cle] <= IDF_minimal:
+# Etape 1 : Les mots moins importants sont présents dans la quasi-totalité du corpus => Vérification par le score IDF
+    for cle in dictionnaire_idf.keys():
+        idf_minimal = math.log10(1 + len(fichiers)/(len(fichiers) - 1))
+        if dictionnaire_idf[cle] <= idf_minimal:
             liste_mots_reparti.append(cle)
 
     # Etape 2 : Les mots moins importants ont un score TF importants dans quasi tous les fichiers du corpus
-    TF_mots = {}
+    tf_mots = {}
     for mot in liste_mots_reparti:              # Appel des mots issus du premier trie
-        TF_mots[mot] = []
+        tf_mots[mot] = []
     for i in range(0, len(fichiers)):
         with open(repertoire + fichiers[i], "r", encoding='utf-8') as fichier:    # Ouverture de chaque texte un par un
             texte = fichier.read()
             tf = term_frequency(texte)  # Appel de la valeur TF des mots du texte analysé
 
         for cle in tf.keys():
-            if cle in TF_mots.keys():
-                TF_mots[cle].append(tf[cle])
+            if cle in tf_mots.keys():
+                tf_mots[cle].append(tf[cle])
 
     # Calcul de la moyenne du TF de chaque mot du premier triage
-    for mot in TF_mots.keys():
+    for mot in tf_mots.keys():
         moyenne = 0
-        for valeur_tf in TF_mots[mot]:
+        for valeur_tf in tf_mots[mot]:
             moyenne = moyenne + valeur_tf
-        moyenne = moyenne / len(TF_mots[mot])
+        moyenne = moyenne / len(tf_mots[mot])
 
         if moyenne > 4:     # Si le mot apparait en moyenne plus de 4 fois par texte
             liste_mots_non_important.append(mot)
@@ -309,33 +232,43 @@ def mots_non_important(repertoire):
 
 # Affiche le nombre de mots importants selon le score TF-IDF demandé par l'utilisateur
 def mots_importants(repertoire):
-    dictionnaire_TF_IDF = score_tf_idf(repertoire)  # Appel du score TF-IDF de tous les mots du répertoire
-    dictionnaire_TF_IDF_max = {}            # Dictionnaire gardant le meilleur score de chaque mot
+    dictionnaire_tf_idf = score_tf_idf(repertoire)  # Appel du score TF-IDF de tous les mots du répertoire
+    dictionnaire_tf_idf_max = {}            # Dictionnaire gardant le meilleur score de chaque mot
 
     liste_mots_important = []
 
-    nb_mots = int(input("Combien de mots au score TF-IDF élevé voulez-vous afficher ? \n"))
+    # Saisie sécurisée
+    nb_mots = input("Combien de mots au score TF-IDF élevé voulez-vous afficher ? \n")
+    while type(nb_mots) is not int:
+        try:
+            nb_mots = int(nb_mots)
+            while nb_mots < 0:
+                nb_mots = input("Veuillez entrer un entier positif : \n")
+        except TypeError:
+            nb_mots = input("Veuillez entrer un nombre entier \n")
+        except ValueError:
+            nb_mots = input("Veuillez entrer un nombre entier \n")
 
-    for cle in dictionnaire_TF_IDF.keys():          # Vérification mot par mot des scores TF-IDF
+    for cle in dictionnaire_tf_idf.keys():          # Vérification mot par mot des scores TF-IDF
 
         score_max_mot = 0
-        for i in range(0, len(dictionnaire_TF_IDF[cle])):      # Vérification des scores du mot
-            if dictionnaire_TF_IDF[cle][i] > score_max_mot:
-                score_max_mot = dictionnaire_TF_IDF[cle][i]
+        for i in range(0, len(dictionnaire_tf_idf[cle])):      # Vérification des scores du mot
+            if dictionnaire_tf_idf[cle][i] > score_max_mot:
+                score_max_mot = dictionnaire_tf_idf[cle][i]
 
-        dictionnaire_TF_IDF_max[cle] = score_max_mot       # Ajout du meilleur score du mot dans le dictionnaire
+        dictionnaire_tf_idf_max[cle] = score_max_mot       # Ajout du meilleur score du mot dans le dictionnaire
 
     # Sélections du nombre de "meilleurs" mots demandés par l'utilisateur
     for i in range(0, nb_mots):
         mot_meilleur_score = [0, 0]        # Stocker le mot et le score IDF correspondant dans une liste pour comparer
-        for cle in dictionnaire_TF_IDF_max.keys():
+        for cle in dictionnaire_tf_idf_max.keys():
 
-            if dictionnaire_TF_IDF_max[cle] > mot_meilleur_score[1]:
+            if dictionnaire_tf_idf_max[cle] > mot_meilleur_score[1]:
                 mot_meilleur_score[0] = cle
-                mot_meilleur_score[1] = dictionnaire_TF_IDF_max[cle]
+                mot_meilleur_score[1] = dictionnaire_tf_idf_max[cle]
 
         # Mettre le score du mot choisi avant à 0 pour ne pas le reprendre
-        dictionnaire_TF_IDF_max[mot_meilleur_score[0]] = 0
+        dictionnaire_tf_idf_max[mot_meilleur_score[0]] = 0
         # Ajout du mot au meilleur score dans la liste à retourner
         liste_mots_important.append(mot_meilleur_score[0])
 
@@ -359,7 +292,16 @@ def mots_plus_utiliser(repertoire):
         president = input()
 
 # Demander combien de mots à afficher
-    nombre_mots = int(input("Combien de mots ? \n"))
+    nombre_mots = input("Combien de mots ? \n")
+    while type(nombre_mots) is not int:
+        try:
+            nombre_mots = int(nombre_mots)
+            while nombre_mots < 0:
+                nombre_mots = input("Veuillez entrer un entier positif : \n")
+        except TypeError:
+            nombre_mots = input("Veuillez entrer un nombre entier \n")
+        except ValueError:
+            nombre_mots = input("Veuillez entrer un nombre entier \n")
 
     if "Nomination_"+president+".txt" in fichiers:     # Discours unique du président choisi
         with open(repertoire+"Nomination_"+president+".txt", "r", encoding='utf-8') as fichier:
@@ -438,6 +380,7 @@ def stat_mot(repertoire):
     liste_noms_fichier = liste_fichiers(repertoire, ".txt")
     nbr_mot_president = {}
     mot_demande = input("Entrez le mot a rechercher : ")
+
     for nom in extraction_nom(liste_noms_fichier):  # determiner quels presidents a parle du mot
 
         if nom == "Chirac" or nom == "Mitterrand":  # pour les presidents qui ont deux discours
@@ -475,8 +418,10 @@ def stat_mot(repertoire):
                     for cle in dico.keys():
                         if cle == mot_demande:
                             nbr_mot_president[nom] = dico[cle]  # ajoute le nombre de fois que le mot a été prononcé
-
-    return nbr_mot_president
+    if nbr_mot_president == {}:
+        return "Aucun président n'a utilisé ce mot"
+    else:
+        return nbr_mot_president
 
 
 # fonctionnalité donnant le premier president à parler d'un mot
@@ -529,7 +474,7 @@ def premier_president(repertoire):
         return bestpresident, "a dit ce mot le plus vite dans son discours."
 
 
-# fonctionnalité qui donne les mots dit par tous les présidents qui ne sont pas des mots "non important"
+# fonctionnalité qui donne les mots prononcés par tous les présidents qui ne sont pas des mots "non important"
 def mot_commun(repertoire):
     liste_noms_fichier = liste_fichiers(repertoire, ".txt")
     list_mots = []  # liste des listes de tous les mots
@@ -559,4 +504,3 @@ def mot_commun(repertoire):
             if mot not in liste_mots_lambda:  # vérifier que ce n'est pas un mon pas important
                 liste_mot_commun.add(mot)  # ajouter les mots dit par tous les présidents à la liste
     return liste_mot_commun
-
