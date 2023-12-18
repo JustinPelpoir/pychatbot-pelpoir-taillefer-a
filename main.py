@@ -100,7 +100,28 @@ while a == 0:
         # Question
         j = 0
         print("Posez votre question : ")
+        while j == 0:
+            question = input()
+            tf_idf_q = tf_idf_question(question)
 
+            # Conversion dictionnaire - Vecteur/liste
+            tf_idf_q_liste = []
+            tfidf_corpus_liste = []
+            for mot in tfidf_corpus:
+                tfidf_corpus_liste.append(tfidf_corpus[mot])
+            for mot in tf_idf_q:
+                tf_idf_q_liste.append(tf_idf_q[mot])
+
+            # Traitement de la question
+            try:
+                print(politesse(
+                    reponse(mot_tf_idf(question),
+                            doc_pertinence(tfidf_corpus_liste, tf_idf_q_liste, fichiers_clean, question)),
+                    question), "\n\n")
+                j = 1
+
+            except ZeroDivisionError:
+                print("Désolé, je n'ai pas compris votre question. Pouvez-vous répéter ? \n")
 
     # Coupure
     if z == 0:
