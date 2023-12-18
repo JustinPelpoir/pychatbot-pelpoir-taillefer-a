@@ -7,7 +7,10 @@ L'historique complet se trouve dans la catégorie "Activity".
 ===== Equipe du projet:
 PELPOIR Justin, TAILLEFER Victor
 
-Ce programme contient 6 fonctionnalités principales:
+Ce programme contient 2 grandes parties:
+Comme indiqué par le menu, poura accéder à la première il faut entrer 1 et pour accéder à la seconde, entrer 2
+=====
+La première contient 6 fonctionnalités principales:
   -1-Afficher la liste des mots les moins importants dans le corpus
   
   -2-Afficher le(s) mot(s) ayant le score TF-IDF le plus élevé(s)
@@ -20,7 +23,6 @@ Ce programme contient 6 fonctionnalités principales:
   
   -6-Indiquer quel(s) est(sont) le(s) mot(s) que tous les présidents ont évoqués
 
-
   ===== UTILISATION :
   Pour utiliser le programme il suffit de suivre les indications données par la console et sélectionner une fonctionnalité en entrant la valeur associée.
   
@@ -31,4 +33,9 @@ Ce programme contient 6 fonctionnalités principales:
   Pour la 4ème et 5ème fonction, entrer le mot que l'on souhaite étudier dans la console.
   
   Les fonctions 1 et 6 ne demandent aucune manipulation supplémentaire.
-  
+
+
+  =====
+  La seconde partie donne la possibilité à l'utilisateur de poser une question, auquelle le programme s’efforcera de répondre.
+  ===== UTILISATION :
+  Il suffit d'entrer la question lorsque le menu le demande pour utiliser cette fonctionnalité.
