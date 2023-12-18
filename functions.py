@@ -1,3 +1,6 @@
+# My First ChatBot, PELPOIR Justin TAILLEFER Victor 
+# Création des fonction et partie fonctionnement du programme avec l'ensemble des manipulation d'information. 
+
 import os
 import math
 
