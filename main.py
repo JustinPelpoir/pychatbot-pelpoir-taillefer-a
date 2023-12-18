@@ -1,3 +1,6 @@
+# My First ChatBot, PELPOIR Justin TAILLEFER Victor 
+# Mise en place du menu et mise en place de l'utilisation des fonctions et fonctionnalités. 
+
 from functions import *
 
 fichiers = liste_fichiers("speeches", ".txt")
