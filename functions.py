@@ -714,16 +714,16 @@ def reponse(mot_important, nom_doc):
         i = 0
         while trouvee == False and i < len(texte):
             phrase_brut = texte[i]
-            # Retrait saut de ligne
-            phrase_liste_mot = phrase_brut.split("\n")
+
+            phrase_liste_mot = phrase_brut.split("\n") # Retrait saut de ligne
             phrase = phrase_liste_mot[0]
-            # Conserver la phrase
-            phrase_original = phrase
-            # Retrait point final
-            phrase_liste_mot = phrase.split(".")
+
+            phrase_original = phrase  # Conserver la phrase
+
+            phrase_liste_mot = phrase.split(".")   # Retrait point final
             phrase = phrase_liste_mot[0]
-            # Retrait autre ponctuation
-            phrase_sans_ponctuation = ""
+
+            phrase_sans_ponctuation = ""         # Retrait autre ponctuation
             for caractere in phrase:
 
                 if caractere == ",":

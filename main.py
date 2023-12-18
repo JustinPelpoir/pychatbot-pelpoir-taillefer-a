@@ -93,7 +93,7 @@ while a == 0:
                     except ValueError:
                         x = input("Êtes-vous sûr de vouloir fermer le Chatbot ? 1: Oui ; 2: Non : \n")
                 if x == 1:
-                    a = 1  # Etat "Off"
+                    a = 1  # etat "Off"
 
     # Menu : Question
     if z == 2:
